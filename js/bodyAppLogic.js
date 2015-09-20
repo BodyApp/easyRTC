@@ -6,7 +6,6 @@ var maxCALLERS = 3;
 var numVideoOBJS = maxCALLERS+1;
 var layout;
 
-
 easyrtc.dontAddCloseButtons(true);
 
 function getIdOfBox(boxNum) {
