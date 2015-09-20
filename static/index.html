@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<link rel="stylesheet" type="text/css" href="/easyrtc/easyrtc.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/easyrtc/easyrtc.js"></script>
+    <script type="text/javascript" src="bodyAppWebRTCLogic.js"></script>
+    <title>Body App Class</title>
+    <script type="text/javascript">
+        function forward(){ 
+        	// window.location = "/demos/";
+        }
+    </script>
+</head>
+<body onload="setTimeout('forward()', 10000)">
+    <h1>Body App Class</h1>
+
+    <h2>Your class will begin in 2 minutes</h2>
+
+     <video  style="float:left" id="self" width="300" height="200" muted="muted"></video>
+   <div style="position:relative;float:left;width:300px">
+       <video id="caller" width="300" height="200"></video>
+   </div>
+
+<!--     <p>In the meantime we'll forward you to <a href="/demos/">the EasyRTC Demo page</a>...</p> -->
+
+    <!-- <a href="http://www.easyrtc.com/"><img src="/easyrtc/img/powered_by_easyrtc.png" width="200" height="60" alt="Powered by EasyRTC"></a> -->
+</body>
+</html>
