@@ -499,9 +499,10 @@ function expandThumb(whichBox) {
 function prepVideoBox(whichBox) {
     var id = getIdOfBox(whichBox);
     setReshaper(id, reshapeThumbs[whichBox]);
-    document.getElementById(id).onclick = function() {
-        expandThumb(whichBox);
-    };
+    // Can enable below to enable clicking on boxes becoming primary box
+    // document.getElementById(id).onclick = function() {
+    //     expandThumb(whichBox);
+    // };
 }
 
 

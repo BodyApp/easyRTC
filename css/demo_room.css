@@ -33,6 +33,11 @@ body {
     margin-top:0px;
 }
 
+#bodyAppTitle {
+    color: white;
+    margin-left: 4%;
+}
+
 #killButton {
     opacity:0.7;
 }
