@@ -14,8 +14,9 @@
 //     position:absolute;
 // }
 
-.mainScreen {
-    float:right;
+#mainScreen {
+    width: 10%;
+    height: 10%;
 }
 
 .closeButton {
@@ -37,9 +38,9 @@
 }
 
 body {
-    background-color:#ffd0d0;
-    margin-left:0px;
-    margin-top:0px;
+    background-color:#0B1A47;
+    margin-left:1px;
+    margin-top:1px;
 }
 
 #bodyAppTitle {

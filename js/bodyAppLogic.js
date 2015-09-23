@@ -1,10 +1,10 @@
 
 
-var activeBox = -1;  // nothing selected
-var aspectRatio = 4/3;  // standard definition video aspect ratio
+// var activeBox = -1;  // nothing selected
+// var aspectRatio = 4/3;  // standard definition video aspect ratio
 var maxCALLERS = 10;
 var numVideoOBJS = maxCALLERS+1;
-var layout;
+// var layout;
 
 easyrtc.dontAddCloseButtons(true);
 
@@ -12,236 +12,7 @@ function getIdOfBox(boxNum) {
     return "box" + boxNum;
 }
 
-
-function reshapeFull(parentw, parenth) {
-    return {
-        left:0,
-        top:0,
-        width:parentw,
-        height:parenth
-    };
-}
-
-function reshapeTextEntryBox(parentw, parenth) {
-    return {
-        left:parentw/4,
-        top:parenth/4,
-        width:parentw/2,
-        height: parenth/4
-    }
-}
-
-function reshapeTextEntryField(parentw, parenth) {
-    return {
-        width:parentw -40
-    }
-}
-
-var margin = 20;
-
-function reshapeToFullSize(parentw, parenth) {
-    var left, top, width, height;
-    var margin= 20;
-
-    if( parentw < parenth*aspectRatio){
-        width = parentw -margin;
-        height = width/aspectRatio;
-    }
-    else {
-        height = parenth-margin;
-        width = height*aspectRatio;
-    }
-    left = (parentw - width)/2;
-    top = (parenth - height)/2;
-    return {
-        left:left,
-        top:top,
-        width:width,
-        height:height
-    };
-}
-
-//
-// a negative percentLeft is interpreted as setting the right edge of the object
-// that distance from the right edge of the parent.
-// Similar for percentTop.
-//
-function setThumbSizeAspect(percentSize, percentLeft, percentTop, parentw, parenth, aspect) {
-
-    var width, height;
-    if( parentw < parenth*aspectRatio){
-        width = parentw * percentSize;
-        height = width/aspect;
-    }
-    else {
-        height = parenth * percentSize;
-        width = height*aspect;
-    }
-    var left;
-    if( percentLeft < 0) {
-        left = parentw - width;
-    }
-    else {
-        left = 0;
-    }
-    left += Math.floor(percentLeft*parentw);
-    var top = 0;
-    if( percentTop < 0) {
-        top = parenth - height;
-    }
-    else {
-        top = 0;
-    }
-    top += Math.floor(percentTop*parenth);
-    return {
-        left:left,
-        top:top,
-        width:width,
-        height:height
-    };
-}
-
-
-function setThumbSize(percentSize, percentLeft, percentTop, parentw, parenth) {
-    return setThumbSizeAspect(percentSize, percentLeft, percentTop, parentw, parenth, aspectRatio);
-}
-
-function setThumbSizeButton(percentSize, percentLeft, percentTop, parentw, parenth, imagew, imageh) {
-    return setThumbSizeAspect(percentSize, percentLeft, percentTop, parentw, parenth, imagew/imageh);
-}
-
-
-var sharedVideoWidth  = 1;
-var sharedVideoHeight = 1;
-
-// var boxUsed = [true, false, false, false];
-// var connectCount = 0;
-
-function killButtonReshaper(parentw, parenth) {
-    var imagew = 128;
-    var imageh = 128;
-    if( parentw < parenth) {
-        return setThumbSizeButton(0.1, -.51, -0.01, parentw, parenth, imagew, imageh);
-    }
-    else {
-        return setThumbSizeButton(0.1, -.01, -.51, parentw, parenth, imagew, imageh);
-    }
-}
-
-
-function muteButtonReshaper(parentw, parenth) {
-    var imagew = 32;
-    var imageh = 32;
-    if( parentw < parenth) {
-        return setThumbSizeButton(0.10, -.51, 0.01, parentw, parenth, imagew, imageh);
-    }
-    else {
-        return setThumbSizeButton(0.10, 0.01, -.51, parentw, parenth, imagew, imageh);
-    }
-}
-
-function reshapeTextEntryButton(parentw, parenth) {
-    var imagew = 32;
-    var imageh = 32;
-    if( parentw < parenth) {
-        return setThumbSizeButton(0.10, .51, 0.01, parentw, parenth, imagew, imageh);
-    }
-    else {
-        return setThumbSizeButton(0.10, 0.01, .51, parentw, parenth, imagew, imageh);
-    }
-}
-
-
-function handleWindowResize() {
-    var fullpage = document.getElementById('fullpage');
-    fullpage.style.width = window.innerWidth + "px";
-    fullpage.style.height = window.innerHeight + "px";
-    connectCount = easyrtc.getConnectionCount();
-
-    function applyReshape(obj,  parentw, parenth) {
-        var myReshape = obj.reshapeMe(parentw, parenth);
-
-        if(typeof myReshape.left !== 'undefined' ) {
-            obj.style.left = Math.round(myReshape.left) + "px";
-        }
-        if(typeof myReshape.top !== 'undefined' ) {
-            obj.style.top = Math.round(myReshape.top) + "px";
-        }
-        if(typeof myReshape.width !== 'undefined' ) {
-            obj.style.width = Math.round(myReshape.width) + "px";
-        }
-        if(typeof myReshape.height !== 'undefined' ) {
-            obj.style.height = Math.round(myReshape.height) + "px";
-        }
-
-        var n = obj.childNodes.length;
-        for(var i = 0; i < n; i++ ) {
-            var childNode = obj.childNodes[i];
-            if( childNode.reshapeMe) {
-                applyReshape(childNode, myReshape.width, myReshape.height);
-            }
-        }
-    }
-
-    applyReshape(fullpage, window.innerWidth, window.innerHeight);
-}
-
-
-function setReshaper(elementId, reshapeFn) {
-    var element = document.getElementById(elementId);
-    if( !element) {
-        alert("Attempt to apply to reshapeFn to non-existent element " + elementId);
-    }
-    if( !reshapeFn) {
-        alert("Attempt to apply misnamed reshapeFn to element " + elementId);
-    }
-    element.reshapeMe = reshapeFn;
-}
-
-function updateMuteImage(toggle) {
-    var muteButton = document.getElementById('muteButton');
-    if( activeBox > 0) { // no kill button for self video
-        muteButton.style.display = "block";
-        var videoObject = document.getElementById( getIdOfBox(activeBox));
-        var isMuted = videoObject.muted?true:false;
-        if( toggle) {
-            isMuted = !isMuted;
-            videoObject.muted = isMuted;
-        }
-        muteButton.src = isMuted?"images/button_unmute.png":"images/button_mute.png";
-    }
-    else {
-        muteButton.style.display = "none";
-    }
-}
-
-
-function expandThumb(whichBox) {
-    var lastActiveBox = activeBox;
-    if( activeBox >= 0 ) {
-        collapseToThumbHelper();
-    }
-    if( lastActiveBox != whichBox) {
-        var id = getIdOfBox(whichBox);
-        activeBox = whichBox;
-        setReshaper(id, reshapeToFullSize);
-        document.getElementById(id).style.zIndex = 1;
-        if( whichBox > 0) {
-            document.getElementById('muteButton').style.display = "block";
-            updateMuteImage();
-            document.getElementById('killButton').style.display = "block";
-        }
-    }
-    updateMuteImage(false);
-    // handleWindowResize();
-}
-
-function muteActiveBox() {
-    updateMuteImage(true);
-}
-
 function callEverybodyElse(roomName, otherPeople) {
-
     easyrtc.setRoomOccupantListener(null); // so we're only called once.
 
     var list = [];
@@ -276,26 +47,36 @@ function callEverybodyElse(roomName, otherPeople) {
 
 
 function loginSuccess() {
-    expandThumb(0);  // expand the mirror image initially.
+    // expandThumb(0);  // expand the mirror image initially.
+}
+
+function messageListener(easyrtcid, msgType, content) {
+    for(var i = 0; i < maxCALLERS; i++) {
+        if( easyrtc.getIthCaller(i) == easyrtcid) {
+            var startArea = document.getElementById(getIdOfBox(i+1));
+            var startX = parseInt(startArea.offsetLeft) + parseInt(startArea.offsetWidth)/2;
+            var startY = parseInt(startArea.offsetTop) + parseInt(startArea.offsetHeight)/2;
+            showMessage(startX, startY, content);
+        }
+    }
 }
 
 function appInit() {
 
     // Prep for the top-down layout manager
-    setReshaper('fullpage', reshapeFull);
+    // setReshaper('fullpage', reshapeFull);
     // for(var i = 0; i < numVideoOBJS; i++) {
         // prepVideoBox(i);
     // }
-    setReshaper('killButton', killButtonReshaper);
-    setReshaper('muteButton', muteButtonReshaper);
+    // setReshaper('killButton', killButtonReshaper);
+    // setReshaper('muteButton', muteButtonReshaper);
     // setReshaper('textentryBox', reshapeTextEntryBox);
     // setReshaper('textentryField', reshapeTextEntryField);
     // setReshaper('textEntryButton', reshapeTextEntryButton);
 
-    updateMuteImage(false);
+    // updateMuteImage(false);
     // window.onresize = handleWindowResize;
     // handleWindowResize(); //initial call of the top-down layout manager
-
 
     easyrtc.setRoomOccupantListener(callEverybodyElse);
     easyrtc.easyApp("easyrtc.multiparty", "box0", ["box1", "box2", "box3", "box4", "box5", "box6", "box7", "box8", "box9"], loginSuccess);
@@ -305,7 +86,9 @@ function appInit() {
     });
     easyrtc.setOnCall( function(easyrtcid, slot) {
         console.log("getConnection count="  + easyrtc.getConnectionCount() );
-        boxUsed[slot+1] = true;
+        console.log("easyrtcid: " + easyrtcid);
+        console.log("slot: " + slot);
+        // boxUsed[slot+1] = true;
         // if(activeBox == 0 ) { // first connection
             // collapseToThumb();
             // document.getElementById('textEntryButton').style.display = 'block';
@@ -317,9 +100,9 @@ function appInit() {
 
     easyrtc.setOnHangup(function(easyrtcid, slot) {
         boxUsed[slot+1] = false;
-        if(activeBox > 0 && slot+1 == activeBox) {
+        // if(activeBox > 0 && slot+1 == activeBox) {
             // collapseToThumb();
-        }
+        // }
         setTimeout(function() {
             document.getElementById(getIdOfBox(slot+1)).style.visibility = "hidden";
 
@@ -332,6 +115,230 @@ function appInit() {
         },20);
     });
 }
+
+
+// var margin = 20;
+// var sharedVideoWidth  = 1;
+// var sharedVideoHeight = 1;
+
+// function setThumbSize(percentSize, percentLeft, percentTop, parentw, parenth) {
+//     return setThumbSizeAspect(percentSize, percentLeft, percentTop, parentw, parenth, aspectRatio);
+// }
+
+// function setThumbSizeButton(percentSize, percentLeft, percentTop, parentw, parenth, imagew, imageh) {
+//     return setThumbSizeAspect(percentSize, percentLeft, percentTop, parentw, parenth, imagew/imageh);
+// }
+
+// function killButtonReshaper(parentw, parenth) {
+//     var imagew = 128;
+//     var imageh = 128;
+//     if( parentw < parenth) {
+//         return setThumbSizeButton(0.1, -.51, -0.01, parentw, parenth, imagew, imageh);
+//     }
+//     else {
+//         return setThumbSizeButton(0.1, -.01, -.51, parentw, parenth, imagew, imageh);
+//     }
+// }
+
+// function muteButtonReshaper(parentw, parenth) {
+//     var imagew = 32;
+//     var imageh = 32;
+//     if( parentw < parenth) {
+//         return setThumbSizeButton(0.10, -.51, 0.01, parentw, parenth, imagew, imageh);
+//     }
+//     else {
+//         return setThumbSizeButton(0.10, 0.01, -.51, parentw, parenth, imagew, imageh);
+//     }
+// }
+
+// function updateMuteImage(toggle) {
+//     var muteButton = document.getElementById('muteButton');
+//     if( activeBox > 0) { // no kill button for self video
+//         muteButton.style.display = "block";
+//         var videoObject = document.getElementById( getIdOfBox(activeBox));
+//         var isMuted = videoObject.muted?true:false;
+//         if( toggle) {
+//             isMuted = !isMuted;
+//             videoObject.muted = isMuted;
+//         }
+//         muteButton.src = isMuted?"images/button_unmute.png":"images/button_mute.png";
+//     }
+//     else {
+//         muteButton.style.display = "none";
+//     }
+// }
+
+// function muteActiveBox() {
+//     updateMuteImage(true);
+// }
+
+// function expandThumb(whichBox) {
+//     var lastActiveBox = activeBox;
+//     if( activeBox >= 0 ) {
+//         collapseToThumbHelper();
+//     }
+//     if( lastActiveBox != whichBox) {
+//         var id = getIdOfBox(whichBox);
+//         activeBox = whichBox;
+//         setReshaper(id, reshapeToFullSize);
+//         document.getElementById(id).style.zIndex = 1;
+//         if( whichBox > 0) {
+//             document.getElementById('muteButton').style.display = "block";
+//             updateMuteImage();
+//             document.getElementById('killButton').style.display = "block";
+//         }
+//     }
+//     updateMuteImage(false);
+    // handleWindowResize();
+// }
+
+// var boxUsed = [true, false, false, false];
+// var connectCount = 0;
+
+// function reshapeTextEntryButton(parentw, parenth) {
+//     var imagew = 32;
+//     var imageh = 32;
+//     if( parentw < parenth) {
+//         return setThumbSizeButton(0.10, .51, 0.01, parentw, parenth, imagew, imageh);
+//     }
+//     else {
+//         return setThumbSizeButton(0.10, 0.01, .51, parentw, parenth, imagew, imageh);
+//     }
+// }
+
+
+// function handleWindowResize() {
+//     var fullpage = document.getElementById('fullpage');
+//     fullpage.style.width = window.innerWidth + "px";
+//     fullpage.style.height = window.innerHeight + "px";
+//     connectCount = easyrtc.getConnectionCount();
+
+//     function applyReshape(obj,  parentw, parenth) {
+//         var myReshape = obj.reshapeMe(parentw, parenth);
+
+//         if(typeof myReshape.left !== 'undefined' ) {
+//             obj.style.left = Math.round(myReshape.left) + "px";
+//         }
+//         if(typeof myReshape.top !== 'undefined' ) {
+//             obj.style.top = Math.round(myReshape.top) + "px";
+//         }
+//         if(typeof myReshape.width !== 'undefined' ) {
+//             obj.style.width = Math.round(myReshape.width) + "px";
+//         }
+//         if(typeof myReshape.height !== 'undefined' ) {
+//             obj.style.height = Math.round(myReshape.height) + "px";
+//         }
+
+//         var n = obj.childNodes.length;
+//         for(var i = 0; i < n; i++ ) {
+//             var childNode = obj.childNodes[i];
+//             if( childNode.reshapeMe) {
+//                 applyReshape(childNode, myReshape.width, myReshape.height);
+//             }
+//         }
+//     }
+
+//     applyReshape(fullpage, window.innerWidth, window.innerHeight);
+// }
+
+
+// function setReshaper(elementId, reshapeFn) {
+//     var element = document.getElementById(elementId);
+//     if( !element) {
+//         alert("Attempt to apply to reshapeFn to non-existent element " + elementId);
+//     }
+//     if( !reshapeFn) {
+//         alert("Attempt to apply misnamed reshapeFn to element " + elementId);
+//     }
+//     element.reshapeMe = reshapeFn;
+// }
+
+
+// function reshapeToFullSize(parentw, parenth) {
+//     var left, top, width, height;
+//     var margin= 20;
+
+//     if( parentw < parenth*aspectRatio){
+//         width = parentw -margin;
+//         height = width/aspectRatio;
+//     }
+//     else {
+//         height = parenth-margin;
+//         width = height*aspectRatio;
+//     }
+//     left = (parentw - width)/2;
+//     top = (parenth - height)/2;
+//     return {
+//         left:left,
+//         top:top,
+//         width:width,
+//         height:height
+//     };
+// }
+
+//
+// a negative percentLeft is interpreted as setting the right edge of the object
+// that distance from the right edge of the parent.
+// Similar for percentTop.
+//
+// function setThumbSizeAspect(percentSize, percentLeft, percentTop, parentw, parenth, aspect) {
+
+//     var width, height;
+//     if( parentw < parenth*aspectRatio){
+//         width = parentw * percentSize;
+//         height = width/aspect;
+//     }
+//     else {
+//         height = parenth * percentSize;
+//         width = height*aspect;
+//     }
+//     var left;
+//     if( percentLeft < 0) {
+//         left = parentw - width;
+//     }
+//     else {
+//         left = 0;
+//     }
+//     left += Math.floor(percentLeft*parentw);
+//     var top = 0;
+//     if( percentTop < 0) {
+//         top = parenth - height;
+//     }
+//     else {
+//         top = 0;
+//     }
+//     top += Math.floor(percentTop*parenth);
+//     return {
+//         left:left,
+//         top:top,
+//         width:width,
+//         height:height
+//     };
+// }
+
+// function reshapeFull(parentw, parenth) {
+//     return {
+//         left:0,
+//         top:0,
+//         width:parentw,
+//         height:parenth
+//     };
+// }
+
+// function reshapeTextEntryBox(parentw, parenth) {
+//     return {
+//         left:parentw/4,
+//         top:parenth/4,
+//         width:parentw/2,
+//         height: parenth/4
+//     }
+// }
+
+// function reshapeTextEntryField(parentw, parenth) {
+//     return {
+//         width:parentw -40
+//     }
+// }
 
 // function reshape1of2(parentw, parenth) {
 //     if( layout== 'p' ) {
@@ -699,16 +706,5 @@ function appInit() {
     //     setTimeout(function(){
     //         fullPage.removeChild(cloudObject);
     //     }, 10000);
-    // }
-// }
-
-// function messageListener(easyrtcid, msgType, content) {
-    // for(var i = 0; i < maxCALLERS; i++) {
-    //     if( easyrtc.getIthCaller(i) == easyrtcid) {
-    //         var startArea = document.getElementById(getIdOfBox(i+1));
-    //         var startX = parseInt(startArea.offsetLeft) + parseInt(startArea.offsetWidth)/2;
-    //         var startY = parseInt(startArea.offsetTop) + parseInt(startArea.offsetHeight)/2;
-    //         showMessage(startX, startY, content);
-    //     }
     // }
 // }

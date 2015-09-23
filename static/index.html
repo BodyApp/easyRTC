@@ -14,22 +14,21 @@
 
     <body onload="appInit()">
         <div id="fullpage" style="background-image:url(images/irongrip.png)">
-            <h1 id="bodyAppTitle"> Body App </h1>
+            <!-- <h1 id="bodyAppTitle"> Body App </h1> -->
             <!-- <div class="row"> -->
             <div class = "column column-2">
                     <video id="box1" class="column-12 row" style="visibility: hidden"></video>
                     <video id="box2" class="column-12 row" style="visibility: hidden"></video>
                     <video id="box3" class="column-12 row" style="visibility: hidden"></video>
                     <video id="box4" class="column-12 row" style="visibility: hidden"></video>
-                    <video id="box5" class="column-12 row" style="visibility: hidden"></video>
             </div>
-                    <video id="box0" class="column column-8 easyRTCMirror"></video>
+                    <video id="box0" id="mainScreen" class="column column-8 row easyRTCMirror"></video>
             <div class = "column column-2">
+                    <video id="box5" class="column-12 row" style="visibility: hidden"></video>
                     <video id="box6" class="column-12 row" style="visibility: hidden"></video>
                     <video id="box7" class="column-12 row" style="visibility: hidden"></video>
                     <video id="box8" class="column-12 row" style="visibility: hidden"></video>
                     <video id="box9" class="column-12 row" style="visibility: hidden"></video>
-                    <video id="box10" class="column-12 row" style="visibility: hidden"></video>
             </div>
         </div>
             <img id="killButton" class="transit boxCommon" onclick="killActiveBox()" src="images/button_close.png" style="display:none;z-index:3" alt="close button" />
