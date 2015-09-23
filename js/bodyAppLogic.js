@@ -233,7 +233,7 @@ function expandThumb(whichBox) {
         }
     }
     updateMuteImage(false);
-    handleWindowResize();
+    // handleWindowResize();
 }
 
 function muteActiveBox() {
@@ -288,13 +288,13 @@ function appInit() {
     // }
     setReshaper('killButton', killButtonReshaper);
     setReshaper('muteButton', muteButtonReshaper);
-    setReshaper('textentryBox', reshapeTextEntryBox);
-    setReshaper('textentryField', reshapeTextEntryField);
-    setReshaper('textEntryButton', reshapeTextEntryButton);
+    // setReshaper('textentryBox', reshapeTextEntryBox);
+    // setReshaper('textentryField', reshapeTextEntryField);
+    // setReshaper('textEntryButton', reshapeTextEntryButton);
 
     updateMuteImage(false);
     // window.onresize = handleWindowResize;
-    handleWindowResize(); //initial call of the top-down layout manager
+    // handleWindowResize(); //initial call of the top-down layout manager
 
 
     easyrtc.setRoomOccupantListener(callEverybodyElse);
@@ -326,7 +326,7 @@ function appInit() {
             if( easyrtc.getConnectionCount() == 0 ) { // no more connections
                 // expandThumb(0);
                 document.getElementById('textEntryButton').style.display = 'none';
-                document.getElementById('textentryBox').style.display = 'none';
+                // document.getElementById('textentryBox').style.display = 'none';
             }
             // handleWindowResize();
         },20);
