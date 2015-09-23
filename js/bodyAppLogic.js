@@ -293,7 +293,7 @@ function appInit() {
     setReshaper('textEntryButton', reshapeTextEntryButton);
 
     updateMuteImage(false);
-    window.onresize = handleWindowResize;
+    // window.onresize = handleWindowResize;
     handleWindowResize(); //initial call of the top-down layout manager
 
 
