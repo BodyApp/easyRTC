@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Body App</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+         <link rel="stylesheet" type="text/css" href="/easyrtc/easyrtc.css" />
+
+        <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+        <script type="text/javascript" src="/easyrtc/easyrtc.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/demo_room.css" />
+        <script type="text/javascript" src="js/trainerAppLogic.js"></script>
+    </head>
+
+    <body onload="appInit()" style="background-image:url(images/irongrip.png)">
+        <div id="fullpage">
+            <!-- <h1 id="bodyAppTitle"> Body App </h1> -->
+            <!-- <div class="row"> -->
+            <div class = "row">
+                <video class="column column-2"></video>
+                <video class="column column-2"></video>
+                <video class="column column-1"></video>
+                <video id="box0" id="mainScreen" class="column column-2 row easyRTCMirror"></video>
+            </div>
+        </br>
+            <div class = "row">
+                    <video id="box1" class="column-3" style="visibility: hidden"></video>
+                    <video id="box2" class="column-3" style="visibility: hidden"></video>
+                    <video id="box3" class="column-3" style="visibility: hidden"></video>
+                    <video id="box4" class="column-3" style="visibility: hidden"></video>
+            </div>
+            <div class = "row">
+                    <video id="box5" class="column-3 row" style="visibility: hidden"></video>
+                    <video id="box6" class="column-3 row" style="visibility: hidden"></video>
+                    <video id="box7" class="column-3 row" style="visibility: hidden"></video>
+                    <video id="box8" class="column-3 row" style="visibility: hidden"></video>
+            </div>
+        </div>
+            <img id="killButton" class="transit boxCommon" onclick="killActiveBox()" src="images/button_close.png" style="display:none;z-index:3" alt="close button" />
+            <img id="muteButton" class="transit boxCommon" onclick ="muteActiveBox()" src="images/button_mute.png" style="display:none;z-index:3" alt="mute button" />
+            <img id="textEntryButton" class="transit boxCommon" onclick ="showTextEntry()" src="images/textEntry.png" style="z-index:3;display:none" alt="text button" />
+        </div>
+    </body>
+</html>
