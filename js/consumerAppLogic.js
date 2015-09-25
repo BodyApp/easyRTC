@@ -4,6 +4,8 @@
 // var aspectRatio = 4/3;  // standard definition video aspect ratio
 var maxCALLERS = 10;
 var numVideoOBJS = maxCALLERS+1;
+// var boxUsed = [false, false, false, false, false, false, false, false, false];
+var numConsumers = 1
 // var layout;
 
 easyrtc.dontAddCloseButtons(true);
@@ -61,14 +63,35 @@ function messageListener(easyrtcid, msgType, content) {
     }
 }
 
-// easyrtc.setStreamAcceptor( function(callerEasyrtcid, stream) {
-//     var video = document.getElementById('box0');
-//     easyrtc.setVideoObjectSrc(video, stream);
-// });
+easyrtc.setStreamAcceptor( function(callerEasyrtcid, stream) {
+    if (easyrtc.idToName(callerEasyrtcid) == "trainer") {
+        var video = document.getElementById('box0');
+        easyrtc.setVideoObjectSrc(video, stream);
+        document.getElementById(getIdOfBox(0)).style.visibility = "visible";
+    } else {
+        numConsumers++
+        document.getElementById(getIdOfBox(numConsumers)).style.visibility = "visible";
+        var video = document.getElementById(getIdOfBox(numConsumers));
+        easyrtc.setVideoObjectSrc(video, stream);
+    }
+});
 
-//  easyrtc.setOnStreamClosed( function (callerEasyrtcid) {
-//     easyrtc.setVideoObjectSrc(document.getElementById('box0'), "");
-// });
+ easyrtc.setOnStreamClosed( function (callerEasyrtcid) {
+    // easyrtc.setVideoObjectSrc(document.getElementById('box0'), "");
+    // document.getElementById(getIdOfBox(0)).style.visibility = "hidden";
+
+    if (easyrtc.idToName(callerEasyrtcid) == "trainer") {
+        var video = document.getElementById('box0');
+        easyrtc.setVideoObjectSrc(video, "");
+        // document.getElementById(getIdOfBox(0)).style.visibility = "hidden";
+    } 
+    // else {
+    //     document.getElementById(getIdOfBox(numConsumers)).style.visibility = "hidden";
+    //     var video = document.getElementById(getIdOfBox(numConsumers));
+    //     easyrtc.setVideoObjectSrc(video, "");
+    //     numConsumers--
+    // }
+});
 
 function appInit() {
 
@@ -88,55 +111,72 @@ function appInit() {
     // handleWindowResize(); //initial call of the top-down layout manager
 
     easyrtc.setRoomOccupantListener(callEverybodyElse);
-    easyrtc.easyApp("easyrtc.multiparty", "box1", ["box0", "box2", "box3", "box4", "box5", "box6", "box7", "box8"], loginSuccess);
-    // easyrtc.initMediaSource(
-    //   function(){       // success callback
-    //       var selfVideo = document.getElementById("box1");
-    //       easyrtc.setVideoObjectSrc(selfVideo, easyrtc.getLocalStream());
-    //       easyrtc.connect("easyrtc.multiparty", loginSuccess);
-    //   },
-    //   connectFailure
-    // );
+    // easyrtc.easyApp("easyrtc.multiparty", "box1", ["box0", "box2", "box3", "box4", "box5", "box6", "box7", "box8"], loginSuccess);
+    easyrtc.initMediaSource(
+        function(){       // success callback
+            var selfVideo = document.getElementById("box1");
+            easyrtc.setVideoObjectSrc(selfVideo, easyrtc.getLocalStream());
+            easyrtc.connect("easyrtc.multiparty", loginSuccess);
+            document.getElementById(getIdOfBox(1)).style.visibility = "visible"; //This is the box for this user
+            boxUsed[1] = true;
+        }
+    );
+    
+    // easyrtc.setVideoObjectSrc( document.getElementById("box1"), easyrtc.getLocalStream() )
+
     easyrtc.setPeerListener(messageListener);
     easyrtc.setDisconnectListener( function() {
         easyrtc.showError("LOST-CONNECTION", "Lost connection to signaling server");
     });
 
-    easyrtc.setOnCall( function(easyrtcid, slot) {
-        console.log("getConnection count="  + easyrtc.getConnectionCount() );
-        console.log("easyrtcid: " + easyrtcid);
-        console.log("slot: " + slot);
-        var name = easyrtc.idToName(easyrtcid)
-        if (name == "trainer") {
-            // document.getElementById(getIdOfBox(0)).style.visibility = "visible";
-            // Need to change source of box0 video to this user's video stream.
-        } else {
-        // boxUsed[slot+1] = true;
-        // if(activeBox == 0 ) { // first connection
-            // collapseToThumb();
-            // document.getElementById('textEntryButton').style.display = 'block';
-        // }
-            document.getElementById(getIdOfBox(slot+2)).style.visibility = "visible";
-        }
-        // handleWindowResize();
-    });
+    // easyrtc.setOnCall( function(easyrtcid, slot) {
+    //     console.log("getConnection count="  + easyrtc.getConnectionCount() );
+    //     console.log("easyrtcid: " + easyrtcid);
+    //     console.log("slot: " + slot);
+    //     var name = easyrtc.idToName(easyrtcid)
+    //     console.log(name)
+    //     if (name == "trainer") {
+    //         boxUsed[0] = true         
+    //         document.getElementById(getIdOfBox(0)).style.visibility = "visible";
+            
+    //         // document.getElementById(getIdOfBox(0)).style.visibility = "visible";
+    //         // Need to change source of box0 video to this user's video stream.
+    //     } else {
+    //     // if(activeBox == 0 ) { // first connection
+    //         // collapseToThumb();
+    //         // document.getElementById('textEntryButton').style.display = 'block';
+    //     // }
+    //         easyrtc.setStreamAcceptor(function(easyrtcid, stream) {
+    //             easyrtc.setVideoObjectSrc( document.getElementById(getIdOfBox(slot+1)), stream)
+    //         })
+    //         document.getElementById(getIdOfBox(slot+1)).style.visibility = "visible";
+    //         boxUsed[slot+1] = true
+    //     }
+    //     // handleWindowResize();
+    // });
 
-    easyrtc.setOnHangup(function(easyrtcid, slot) {
-        boxUsed[slot+1] = false;
-        // if(activeBox > 0 && slot+1 == activeBox) {
-            // collapseToThumb();
-        // }
-        setTimeout(function() {
-            document.getElementById(getIdOfBox(slot+1)).style.visibility = "hidden";
+    // easyrtc.setOnHangup(function(easyrtcid, slot) {
+    //     var name = easyrtc.idToName(easyrtcid)
+    //     if (name == "trainer") {
+    //         boxUsed[0] = false
+    //         document.getElementById("box0").style.visibility = "hidden";
+    //     } else {
+    //         boxUsed[slot+1] = false;
+    //     }
+    //     // if(activeBox > 0 && slot+1 == activeBox) {
+    //         // collapseToThumb();
+    //     // }
+    //     setTimeout(function() {
+    //         document.getElementById(getIdOfBox(slot+1)).style.visibility = "hidden";
 
-            if( easyrtc.getConnectionCount() == 0 ) { // no more connections
-                // expandThumb(0);
-                document.getElementById('textEntryButton').style.display = 'none';
-                // document.getElementById('textentryBox').style.display = 'none';
-            }
-            // handleWindowResize();
-        },20);
-    });
+    //         if( easyrtc.getConnectionCount() == 0 ) { // no more connections
+    //             // expandThumb(0);
+    //             document.getElementById('textEntryButton').style.display = 'none';
+    //             // document.getElementById('textentryBox').style.display = 'none';
+    //         }
+    //         // handleWindowResize();
+    //     },20);
+    // });
 }
 
 // easyrtc.on("setUsername", setTrainerUsername);
@@ -220,7 +260,7 @@ function setTrainerUsername(trainerUsername) {
     // handleWindowResize();
 // }
 
-// var boxUsed = [true, false, false, false];
+
 // var connectCount = 0;
 
 // function reshapeTextEntryButton(parentw, parenth) {
