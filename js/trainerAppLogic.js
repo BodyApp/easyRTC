@@ -45,6 +45,8 @@ function callEverybodyElse(roomName, otherPeople) {
 
 
 function loginSuccess() {
+    var username = "trainer"
+    // easyrtc.emit("setUsername", username);
     // expandThumb(0);  // expand the mirror image initially.
 }
 
@@ -77,6 +79,7 @@ function appInit() {
     // handleWindowResize(); //initial call of the top-down layout manager
 
     easyrtc.setRoomOccupantListener(callEverybodyElse);
+    easyrtc.setUsername("trainer")
     easyrtc.easyApp("easyrtc.multiparty", "box0", ["box1", "box2", "box3", "box4", "box5", "box6", "box7", "box8"], loginSuccess);
     easyrtc.setPeerListener(messageListener);
     easyrtc.setDisconnectListener( function() {
@@ -86,6 +89,7 @@ function appInit() {
         console.log("getConnection count="  + easyrtc.getConnectionCount() );
         console.log("easyrtcid: " + easyrtcid);
         console.log("slot: " + slot);
+
         // boxUsed[slot+1] = true;
         // if(activeBox == 0 ) { // first connection
             // collapseToThumb();

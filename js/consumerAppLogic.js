@@ -61,6 +61,15 @@ function messageListener(easyrtcid, msgType, content) {
     }
 }
 
+// easyrtc.setStreamAcceptor( function(callerEasyrtcid, stream) {
+//     var video = document.getElementById('box0');
+//     easyrtc.setVideoObjectSrc(video, stream);
+// });
+
+//  easyrtc.setOnStreamClosed( function (callerEasyrtcid) {
+//     easyrtc.setVideoObjectSrc(document.getElementById('box0'), "");
+// });
+
 function appInit() {
 
     // Prep for the top-down layout manager
@@ -79,24 +88,38 @@ function appInit() {
     // handleWindowResize(); //initial call of the top-down layout manager
 
     easyrtc.setRoomOccupantListener(callEverybodyElse);
-    easyrtc.easyApp("easyrtc.multiparty", "box0", ["box1", "box2", "box3", "box4", "box5", "box6", "box7", "box8"], loginSuccess);
+    easyrtc.easyApp("easyrtc.multiparty", "box1", ["box0", "box2", "box3", "box4", "box5", "box6", "box7", "box8"], loginSuccess);
+    // easyrtc.initMediaSource(
+    //   function(){       // success callback
+    //       var selfVideo = document.getElementById("box1");
+    //       easyrtc.setVideoObjectSrc(selfVideo, easyrtc.getLocalStream());
+    //       easyrtc.connect("easyrtc.multiparty", loginSuccess);
+    //   },
+    //   connectFailure
+    // );
     easyrtc.setPeerListener(messageListener);
     easyrtc.setDisconnectListener( function() {
         easyrtc.showError("LOST-CONNECTION", "Lost connection to signaling server");
     });
+
     easyrtc.setOnCall( function(easyrtcid, slot) {
         console.log("getConnection count="  + easyrtc.getConnectionCount() );
         console.log("easyrtcid: " + easyrtcid);
         console.log("slot: " + slot);
+        var name = easyrtc.idToName(easyrtcid)
+        if (name == "trainer") {
+            // document.getElementById(getIdOfBox(0)).style.visibility = "visible";
+            // Need to change source of box0 video to this user's video stream.
+        } else {
         // boxUsed[slot+1] = true;
         // if(activeBox == 0 ) { // first connection
             // collapseToThumb();
             // document.getElementById('textEntryButton').style.display = 'block';
         // }
-        document.getElementById(getIdOfBox(slot+1)).style.visibility = "visible";
+            document.getElementById(getIdOfBox(slot+2)).style.visibility = "visible";
+        }
         // handleWindowResize();
     });
-
 
     easyrtc.setOnHangup(function(easyrtcid, slot) {
         boxUsed[slot+1] = false;
@@ -116,6 +139,11 @@ function appInit() {
     });
 }
 
+// easyrtc.on("setUsername", setTrainerUsername);
+
+function setTrainerUsername(trainerUsername) {
+    console.log("consumer received trainer username of " + trainerUsername)
+} 
 
 // var margin = 20;
 // var sharedVideoWidth  = 1;
