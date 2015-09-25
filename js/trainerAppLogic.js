@@ -45,7 +45,7 @@ function callEverybodyElse(roomName, otherPeople) {
 
 
 function loginSuccess() {
-    var username = "trainer"
+    // var username = "trainer"
     // easyrtc.emit("setUsername", username);
     // expandThumb(0);  // expand the mirror image initially.
 }

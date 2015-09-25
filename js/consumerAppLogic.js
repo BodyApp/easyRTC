@@ -6,6 +6,7 @@ var maxCALLERS = 10;
 var numVideoOBJS = maxCALLERS+1;
 // var boxUsed = [false, false, false, false, false, false, false, false, false];
 var numConsumers = 1
+var callerEasyrtcidsIdsList = {}
 // var layout;
 
 easyrtc.dontAddCloseButtons(true);
@@ -64,15 +65,25 @@ function messageListener(easyrtcid, msgType, content) {
 }
 
 easyrtc.setStreamAcceptor( function(callerEasyrtcid, stream) {
-    if (easyrtc.idToName(callerEasyrtcid) == "trainer") {
+    var callerUsername = easyrtc.idToName(callerEasyrtcid)
+    if (callerUsername == "trainer") {
         var video = document.getElementById('box0');
         easyrtc.setVideoObjectSrc(video, stream);
         document.getElementById(getIdOfBox(0)).style.visibility = "visible";
     } else {
-        numConsumers++
-        document.getElementById(getIdOfBox(numConsumers)).style.visibility = "visible";
-        var video = document.getElementById(getIdOfBox(numConsumers));
-        easyrtc.setVideoObjectSrc(video, stream);
+        if (callerEasyrtcidsIdsList[callerUsername]) {
+            console.log("caller already has box");
+            // document.getElementById(callerUsername).style.visibility = "visible";
+            var video = document.getElementById(getIdOfBox(callerEasyrtcidsIdsList[callerUsername]));
+            easyrtc.setVideoObjectSrc(video, stream);
+        } else {
+            console.log("caller is new with easyrtcid of " + callerUsername);
+            numConsumers++
+            document.getElementById(getIdOfBox(numConsumers)).style.visibility = "visible";
+            var video = document.getElementById(getIdOfBox(numConsumers));
+            easyrtc.setVideoObjectSrc(video, stream);
+            callerEasyrtcidsIdsList[callerUsername] = numConsumers;
+        }
     }
 });
 
@@ -85,15 +96,16 @@ easyrtc.setStreamAcceptor( function(callerEasyrtcid, stream) {
         easyrtc.setVideoObjectSrc(video, "");
         // document.getElementById(getIdOfBox(0)).style.visibility = "hidden";
     } 
-    // else {
-    //     document.getElementById(getIdOfBox(numConsumers)).style.visibility = "hidden";
-    //     var video = document.getElementById(getIdOfBox(numConsumers));
-    //     easyrtc.setVideoObjectSrc(video, "");
-    //     numConsumers--
-    // }
+    else {
+        // document.getElementById(getIdOfBox(numConsumers)).style.visibility = "hidden";
+        var video = document.getElementById(callerEasyrtcid);
+        easyrtc.setVideoObjectSrc(video, "");
+        // numConsumers-- //Don't want to do this as going to hold the video place when disconnect.
+    }
 });
 
 function appInit() {
+    var usernameInput = prompt("Enter username")
 
     // Prep for the top-down layout manager
     // setReshaper('fullpage', reshapeFull);
@@ -116,6 +128,7 @@ function appInit() {
         function(){       // success callback
             var selfVideo = document.getElementById("box1");
             easyrtc.setVideoObjectSrc(selfVideo, easyrtc.getLocalStream());
+            easyrtc.setUsername(usernameInput)
             easyrtc.connect("easyrtc.multiparty", loginSuccess);
             document.getElementById(getIdOfBox(1)).style.visibility = "visible"; //This is the box for this user
             boxUsed[1] = true;
