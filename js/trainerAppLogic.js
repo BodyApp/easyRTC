@@ -63,6 +63,9 @@ function messageListener(easyrtcid, msgType, content) {
 
 function appInit() {
 
+    var passwordEntered = prompt("Enter password to prove you are the trainer")
+    if (passwordEntered != "delts") { return alert("That was the wrong password. Refresh to try again.") }
+
     // Prep for the top-down layout manager
     // setReshaper('fullpage', reshapeFull);
     // for(var i = 0; i < numVideoOBJS; i++) {
