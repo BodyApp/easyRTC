@@ -98,15 +98,16 @@ easyrtc.setStreamAcceptor( function(callerEasyrtcid, stream) {
     } 
     else {
         // document.getElementById(getIdOfBox(numConsumers)).style.visibility = "hidden";
-        var video = document.getElementById(callerEasyrtcid);
-        easyrtc.setVideoObjectSrc(video, "");
+        var callerUsername = easyrtc.idToName(callerEasyrtcid)
+        var video = document.getElementById(getIdOfBox(callerEasyrtcidsIdsList[callerUsername]));
+        // easyrtc.setVideoObjectSrc(video, "");
         // numConsumers-- //Don't want to do this as going to hold the video place when disconnect.
     }
 });
 
 function appInit() {
-    var usernameInput = prompt("Enter username")
-
+    var usernameInput = prompt("Welcome to the Alpha version of Body Appl  Please enter a username.  Make sure it's the same one you used before if you're logging back in.")
+    usernameInput = usernameInput.replace(/\s+/g, ''); //Gets rid of white space
     // Prep for the top-down layout manager
     // setReshaper('fullpage', reshapeFull);
     // for(var i = 0; i < numVideoOBJS; i++) {
@@ -131,7 +132,7 @@ function appInit() {
             easyrtc.setUsername(usernameInput)
             easyrtc.connect("easyrtc.multiparty", loginSuccess);
             document.getElementById(getIdOfBox(1)).style.visibility = "visible"; //This is the box for this user
-            boxUsed[1] = true;
+            // boxUsed[1] = true;
         }
     );
     
@@ -194,9 +195,9 @@ function appInit() {
 
 // easyrtc.on("setUsername", setTrainerUsername);
 
-function setTrainerUsername(trainerUsername) {
-    console.log("consumer received trainer username of " + trainerUsername)
-} 
+// function setTrainerUsername(trainerUsername) {
+//     console.log("consumer received trainer username of " + trainerUsername)
+// } 
 
 // var margin = 20;
 // var sharedVideoWidth  = 1;
